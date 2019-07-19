@@ -3,6 +3,9 @@
     "name": "periodic-api",
     "builds": [{
         "src": "src/main.rs",
-        "use": "@now/rust"
+        "use": "@now/rust",
+        "config": {
+            "rust": "nightly"
+        }
     }]
 }
