@@ -35,6 +35,17 @@ fn get_periodic_table() -> Result<Vec<Element>, Box<dyn Error>> {
 
 }
 
+#[get("/<element>", format = "json")]
+fn element(element: String) -> Json<Option<Element>> {
+
+    let elements: Vec<Element> = get_periodic_table()
+        .expect("Couldn't read file!");
+
+    let desired = elements.into_iter().find(|x| x.name == element);
+    Json(desired)
+
+}
+
 #[get("/<symbol>", format = "json")]
 fn symbol(symbol: String) -> Json<Option<Element>> {
 
@@ -53,6 +64,7 @@ fn index() -> &'static str {
 
 fn main() {
     rocket::ignite()
+        .mount("/element", routes![element])
         .mount("/symbol", routes![symbol])
         .mount("/", routes![index])
         .launch();
