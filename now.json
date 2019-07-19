@@ -2,7 +2,7 @@
     "version": 2,
     "name": "periodic-api",
     "builds": [{
-        "src": "main.rs",
+        "src": "src/main.rs",
         "use": "@now/rust"
     }]
 }
