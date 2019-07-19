@@ -1,37 +1,48 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #[macro_use] extern crate rocket;
+use rocket_contrib::json::Json;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
-use std::path::Path;
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 struct Element {
     name: String,
     atomic_mass: f64,
-    boiling_point: f64,
-    density: f64,
-    melting_point: f64,
-    molar_heat: f64,
+    boiling_point: Option<f64>,
+    density: Option<f64>,
+    melting_point: Option<f64>,
+    molar_heat: Option<f64>,
     number: i64,
     phase: String,
     symbol: String,
     shells: Vec<i64>,
-    electron_affinity: f64,
-    electronegativity: f64,
-    ionization_energies: Vec<i64>,
+    electron_affinity: Option<f64>,
+    electronegativity: Option<f64>,
+    ionization_energies: Vec<f64>,
 }
 
 fn get_periodic_table() -> Result<Vec<Element>, Box<dyn Error>> {
 
-    let file = File::open(Path::new("./table.json"))?;
+    let file = File::open("table.json")?;
     let reader = BufReader::new(file);
 
     let c: Vec<Element> = serde_json::from_reader(reader)?;
     Ok(c)
+
+}
+
+#[get("/<symbol>", format = "json")]
+fn symbol(symbol: String) -> Json<Option<Element>> {
+
+    let elements: Vec<Element> = get_periodic_table()
+        .expect("Couldn't read file!");
+
+    let desired = elements.into_iter().find(|x| x.symbol == symbol);
+    Json(desired)
 
 }
 
@@ -42,6 +53,7 @@ fn index() -> &'static str {
 
 fn main() {
     rocket::ignite()
+        .mount("/symbol", routes![symbol])
         .mount("/", routes![index])
         .launch();
 }
