@@ -2,7 +2,7 @@
     "version": 2,
     "name": "periodic-api",
     "builds": [{
-        "src": "src/main.rs",
+        "src": "Cargo.toml",
         "use": "@now/rust",
         "config": {
             "rust": "nightly"
