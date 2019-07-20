@@ -2,14 +2,10 @@
     "version": 2,
     "name": "periodic-api",
     "builds": [{
-        "src": "Cargo.toml",
-        "use": "@now/rust",
+        "src": "*.exe",
+        "use": "now-static-bin",
         "config": {
             "rust": "nightly"
         }
-    }],
-    "routes": [{
-        "src": "/(.*)",
-        "dest": "/src/main.rs"
     }]
 }
